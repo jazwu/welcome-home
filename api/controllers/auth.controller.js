@@ -84,7 +84,7 @@ export const signin = (req, res, next) => {
             .cookie("access_token", token, {
               httpOnly: true,
             })
-            .json({ username: user.userName, role: user.roleID });
+            .json({ user: { username: user.userName, role: user.roleID } });
         }
       );
     }
