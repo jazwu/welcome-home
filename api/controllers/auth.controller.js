@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/errorHandler.js";
 
 export const signup = (req, res, next) => {
-  const { username, password, fname, lname, email } = req.body;
+  const { username, password, fname, lname, email, role } = req.body;
 
   if (!username || !password || !fname || !lname || !email) {
     next(errorHandler({ statusCode: 400, message: "All fields are required" }));
@@ -18,6 +18,15 @@ export const signup = (req, res, next) => {
       if (error) {
         next(errorHandler({ statusCode: 500, message: error.message }));
       }
+      db.query(
+        "INSERT INTO Act (userName, roleID) VALUES (?, ?)",
+        [username, role],
+        (error) => {
+          if (error) {
+            next(errorHandler({ statusCode: 500, message: error.message }));
+          }
+        }
+      );
       res.status(201).json({ message: "User added" });
     }
   );
