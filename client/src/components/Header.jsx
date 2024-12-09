@@ -1,8 +1,11 @@
-import { Navbar, Button } from "flowbite-react";
+import { Navbar, Button, Avatar, Dropdown } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Header() {
+  const { currentUser } = useSelector((state) => state.user);
   const path = useLocation().pathname;
+
   return (
     <Navbar className="border-b-2">
       <Link
@@ -15,11 +18,22 @@ export default function Header() {
         Home
       </Link>
       <div className="flex gap-2 md:order-2">
-        <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Sign In
-          </Button>
-        </Link>
+        {currentUser ? (
+          <Dropdown arrowIcon={false} inline label={<Avatar rounded />}>
+            <Dropdown.Header>
+              <span className="block text-sm">@{currentUser.username}</span>
+            </Dropdown.Header>
+            <Dropdown.Item>
+              <Link to="/logout">Logout</Link>
+            </Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign In
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
