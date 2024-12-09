@@ -1,11 +1,12 @@
 import db from "../db.js";
 import bcryptjs from "bcryptjs";
+import { errorHandler } from "../utils/errorHandler.js";
 
-export const signup = (req, res) => {
+export const signup = (req, res, next) => {
   const { username, password, fname, lname, email } = req.body;
 
   if (!username || !password || !fname || !lname || !email) {
-    return res.status(400).json({ message: "Please enter all fields" });
+    next(errorHandler({ statusCode: 400, message: "All fields are required" }));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -15,8 +16,7 @@ export const signup = (req, res) => {
     [username, hashedPassword, fname, lname, email],
     (error) => {
       if (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Failed to insert user" });
+        next(errorHandler({ statusCode: 500, message: error.message }));
       }
       res.status(201).json({ message: "User added" });
     }
