@@ -1,10 +1,26 @@
 import { Navbar, Button, Avatar, Dropdown } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logOutSuccess } from "../redux/user/userSlice";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/user/logout", {
+        method: "POST",
+      });
+      if (response.ok) {
+        dispatch(logOutSuccess());
+        window.location.href = "/sign-in";
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Navbar className="border-b-2">
@@ -23,9 +39,7 @@ export default function Header() {
             <Dropdown.Header>
               <span className="block text-sm">@{currentUser.username}</span>
             </Dropdown.Header>
-            <Dropdown.Item>
-              <Link to="/logout">Logout</Link>
-            </Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to="/sign-in">
