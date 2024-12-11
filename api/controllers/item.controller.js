@@ -16,3 +16,33 @@ export const getPieces = (req, res, next) => {
     }
   );
 };
+
+export const getItems = (req, res, next) => {
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = parseInt(req.query.offset) || 0;
+  const category = req.query.category;
+  const subcategory = req.query.sub;
+
+  db.query(
+    `
+    SELECT * 
+    FROM Item 
+    ${
+      category && subcategory
+        ? "WHERE mainCategory = ? AND subCategory = ?"
+        : ""
+    }
+    LIMIT ? 
+    OFFSET ?
+    `,
+    category && subcategory
+      ? [category, subcategory, limit, offset]
+      : [limit, offset],
+    (error, results) => {
+      if (error) {
+        next(error);
+      }
+      res.status(200).json({ items: results, total: results.length });
+    }
+  );
+};
