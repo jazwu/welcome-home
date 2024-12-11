@@ -11,10 +11,10 @@ app.listen(3000, () => {
   console.log("Server is running on port 3000!");
 });
 
-app.use("/api/user", userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/item", itemRoutes);
-app.use("/api/category", categoryRoutes);
+app.use("/api/items", itemRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
