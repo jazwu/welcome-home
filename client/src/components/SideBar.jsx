@@ -5,20 +5,20 @@ import { TbHeartHandshake, TbShoppingCartPlus } from "react-icons/tb";
 
 export default function SideBar({ children }) {
   return (
-    <div className="flex">
-      <Sidebar className="w-64">
+    <div className="flex h-screen">
+      <Sidebar className="w-64 h-full">
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item href="/items" icon={FaSearch}>
+            <Sidebar.Item href="/search-item" icon={FaSearch}>
               Search Item
             </Sidebar.Item>
-            <Sidebar.Item href="/orders" icon={PiPackageFill}>
+            <Sidebar.Item href="/search-order" icon={PiPackageFill}>
               Search Order
             </Sidebar.Item>
-            <Sidebar.Item href="/users" icon={TbHeartHandshake}>
+            <Sidebar.Item href="#" icon={TbHeartHandshake}>
               Accept Donation
             </Sidebar.Item>
-            <Sidebar.Item href="/users" icon={TbShoppingCartPlus}>
+            <Sidebar.Item href="#" icon={TbShoppingCartPlus}>
               Start an Order
             </Sidebar.Item>
           </Sidebar.ItemGroup>
