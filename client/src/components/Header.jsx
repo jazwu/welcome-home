@@ -1,16 +1,75 @@
-import { Navbar, Button, Avatar, Dropdown } from "flowbite-react";
+import { Navbar, Button, Avatar, Dropdown, Popover } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOutSuccess } from "../redux/user/userSlice";
+import { useEffect, useState } from "react";
+
+const SubCategory = ({ mainCategory }) => {
+  const [subCategories, setSubCategories] = useState([]);
+
+  useEffect(() => {
+    const getSubCategories = async () => {
+      try {
+        const response = await fetch(`/api/categories/${mainCategory}`);
+        if (response.ok) {
+          const subCategories = await response.json();
+          setSubCategories(subCategories);
+        } else {
+          throw new Error("Failed to fetch sub categories");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getSubCategories();
+  }, [mainCategory]);
+
+  return (
+    <>
+      {subCategories.map((subCategory, index) => (
+        <Dropdown.Item
+          key={index}
+          href={`/items?category=${mainCategory}&sub=${subCategory}`}
+        >
+          {subCategory}
+        </Dropdown.Item>
+      ))}
+    </>
+  );
+};
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
+
+  const [categories, setCategories] = useState([]);
+
   const path = useLocation().pathname;
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const getAllCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (response.ok) {
+          const categories = await response.json();
+          setCategories(categories);
+        } else {
+          throw new Error("Failed to fetch categories");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (currentUser?.role === "client") {
+      getAllCategories();
+    }
+  }, [currentUser]);
+
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/user/logout", {
+      const response = await fetch("/api/users/logout", {
         method: "POST",
       });
       if (response.ok) {
@@ -54,9 +113,32 @@ export default function Header() {
         <Navbar.Link href="/" active={path === "/"}>
           Home
         </Navbar.Link>
-        <Navbar.Link href="/find-item" active={path === "find-item"}>
-          Find an Item
-        </Navbar.Link>
+        {currentUser?.role === "client" && (
+          <Dropdown
+            label=""
+            inline
+            trigger="hover"
+            renderTrigger={() => (
+              <span style={{ cursor: "pointer" }}>All Categories</span>
+            )}
+          >
+            <Dropdown.Item href="/items?category=All">All</Dropdown.Item>
+            {categories.map((category, index) => (
+              <Dropdown.Item key={index} href={`/items?category=${category}`}>
+                <Dropdown
+                  label=""
+                  trigger="hover"
+                  placement="right"
+                  renderTrigger={() => (
+                    <span style={{ cursor: "pointer" }}>{category}</span>
+                  )}
+                >
+                  <SubCategory mainCategory={category} />
+                </Dropdown>
+              </Dropdown.Item>
+            ))}
+          </Dropdown>
+        )}
       </Navbar.Collapse>
     </Navbar>
   );
