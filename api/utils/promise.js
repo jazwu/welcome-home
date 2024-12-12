@@ -1,4 +1,5 @@
 import db from "../db.js";
+import { errorHandler } from "./errorHandler.js";
 
 export const getOrderItems = (orderId) => {
   return new Promise((resolve, reject) => {
@@ -7,10 +8,10 @@ export const getOrderItems = (orderId) => {
       [orderId],
       (error, results) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         if (results.length === 0) {
-          reject(errorHandler("Order not found", 404));
+          return reject(errorHandler(404, "Order not found"));
         }
         const newResults = {
           orderID: results[0].orderID,
@@ -21,7 +22,6 @@ export const getOrderItems = (orderId) => {
             return { ItemID: result.ItemID };
           }),
         };
-
         resolve(newResults);
       }
     );
@@ -35,10 +35,10 @@ export const getItemDetails = (itemId) => {
       [itemId],
       (error, results) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         if (results.length === 0) {
-          reject(errorHandler("Item not found", 404));
+          return reject(errorHandler(404, "Item not found"));
         }
         resolve(results[0]);
       }
@@ -53,10 +53,10 @@ export const getPieces = (itemId) => {
       [itemId],
       (error, pieces) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         if (pieces.length === 0) {
-          reject(errorHandler("Pieces not found", 404));
+          return reject(errorHandler(404, "No pieces found for this item"));
         }
         resolve(pieces);
       }

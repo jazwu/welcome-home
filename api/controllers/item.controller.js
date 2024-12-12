@@ -11,7 +11,7 @@ export const getPieces = (req, res, next) => {
         next(error);
       }
       if (results.length === 0) {
-        return res.status(404).json({ message: "Item not found" });
+        return next(errorHandler(404, "No pieces found for this item"));
       }
       res.status(200).json(results);
     }
@@ -50,7 +50,7 @@ export const createItem = (req, res, next) => {
   if (req.user && req.user.role !== "staff") {
     return next(errorHandler("Unauthorized", 401));
   }
-  
+
   const {
     iDescription,
     photo,
