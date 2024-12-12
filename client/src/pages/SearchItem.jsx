@@ -21,9 +21,11 @@ export default function SearchItem() {
       if (res.ok) {
         setPieces(data);
       } else {
+        setPieces([]);
         setErrorMessage(data.message);
       }
     } catch (error) {
+      setPieces([]);
       setErrorMessage(error.message);
     } finally {
       setLoading(false);
@@ -32,6 +34,7 @@ export default function SearchItem() {
 
   useEffect(() => {
     setErrorMessage(null);
+    setPieces([]);
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get("id");
     if (id) {
@@ -87,8 +90,8 @@ export default function SearchItem() {
           </form>
 
           {/* locations of all pieces */}
-          <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
-            {pieces.length !== 0 && (
+          {pieces.length !== 0 ? (
+            <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
               <Table hoverable>
                 <Table.Head>
                   <Table.HeadCell># Piece</Table.HeadCell>
@@ -96,7 +99,7 @@ export default function SearchItem() {
                   <Table.HeadCell># shelf</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
-                  {pieces.map((piece) => (
+                  {pieces?.map((piece) => (
                     <Table.Row key={piece.pieceNum}>
                       <Table.Cell>{piece.pieceNum}</Table.Cell>
                       <Table.Cell>{piece.roomNum}</Table.Cell>
@@ -105,8 +108,8 @@ export default function SearchItem() {
                   ))}
                 </Table.Body>
               </Table>
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

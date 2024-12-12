@@ -42,9 +42,11 @@ export default function SearchOrder() {
         setSupervisorID(data.supervisor);
         setClientID(data.client);
       } else {
+        setItems([]);
         setErrorMessage(data.message);
       }
     } catch (error) {
+      setItems([]);
       setErrorMessage(error.message);
     } finally {
       setLoading(false);
@@ -53,6 +55,7 @@ export default function SearchOrder() {
 
   useEffect(() => {
     setErrorMessage(null);
+    setItems([]);
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get("id");
     if (id) {
@@ -110,8 +113,13 @@ export default function SearchOrder() {
           </form>
 
           {/* locations of all items */}
-          <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
-            {items.length !== 0 && (
+          {items.length !== 0 && (
+            <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
+              <p className="my-3 text-sm font-serif">
+                Ordered on {new Date(orderDate).toLocaleDateString()}, Ordered
+                By <span className="font-semibold">{clientID}</span>, Supervised
+                by <span className="font-semibold">{supervisorID}</span>
+              </p>
               <Table hoverable>
                 <Table.Head>
                   <Table.HeadCell>Item ID</Table.HeadCell>
@@ -143,8 +151,8 @@ export default function SearchOrder() {
                   ))}
                 </Table.Body>
               </Table>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
       {selectedItem && (
