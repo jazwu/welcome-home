@@ -49,7 +49,7 @@ export const getItemDetails = (itemId) => {
 export const getPieces = (itemId) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT pieceNum, pDescription, length, width, height, roomNum, shelfNum FROM Piece WHERE ItemID = ?",
+      "SELECT ItemID, pieceNum, pDescription, length, width, height, roomNum, shelfNum FROM Piece WHERE ItemID = ?",
       [itemId],
       (error, pieces) => {
         if (error) {

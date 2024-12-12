@@ -1,21 +1,15 @@
 import db from "../db.js";
 import { errorHandler } from "../utils/errorHandler.js";
+import { getPieces as getPiecesPromise } from "../utils/promise.js";
 
-export const getPieces = (req, res, next) => {
+export const getPieces = async (req, res, next) => {
   const itemId = req.params.id;
-  db.query(
-    "SELECT * FROM Piece WHERE ItemID = ?",
-    [itemId],
-    (error, results) => {
-      if (error) {
-        next(error);
-      }
-      if (results.length === 0) {
-        return next(errorHandler(404, "No pieces found for this item"));
-      }
-      res.status(200).json(results);
-    }
-  );
+  try {
+    const pieces = await getPiecesPromise(itemId);
+    res.status(200).json(pieces);
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const getItems = (req, res, next) => {
