@@ -18,31 +18,29 @@ export const getPieces = (req, res, next) => {
 };
 
 export const getItems = (req, res, next) => {
-  const limit = parseInt(req.query.limit) || 10;
-  const offset = parseInt(req.query.offset) || 0;
-  const category = req.query.category;
-  const subcategory = req.query.sub;
+  const { category, sub: subcategory, limit = 10, offset = 0 } = req.query;
 
-  db.query(
-    `
-    SELECT * 
-    FROM Item 
-    ${
-      category && subcategory
-        ? "WHERE mainCategory = ? AND subCategory = ?"
-        : ""
+  let query = "SELECT * FROM Item";
+  let queryParams = [];
+
+  if (category && category.length > 0 && category !== "All") {
+    query += " WHERE mainCategory = ?";
+    queryParams.push(category);
+  }
+
+  if (subcategory && subcategory.length > 0) {
+    query += category && category.length > 0 ? " AND" : " WHERE";
+    query += " subCategory = ?";
+    queryParams.push(subcategory);
+  }
+
+  query += " LIMIT ? OFFSET ?";
+  queryParams.push(parseInt(limit), parseInt(offset));
+
+  db.query(query, queryParams, (error, results) => {
+    if (error) {
+      return next(error);
     }
-    LIMIT ? 
-    OFFSET ?
-    `,
-    category && subcategory
-      ? [category, subcategory, limit, offset]
-      : [limit, offset],
-    (error, results) => {
-      if (error) {
-        next(error);
-      }
-      res.status(200).json({ items: results, total: results.length });
-    }
-  );
+    res.status(200).json({ items: results, total: results.length });
+  });
 };
