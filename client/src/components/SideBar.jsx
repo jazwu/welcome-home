@@ -2,9 +2,12 @@ import { Sidebar } from "flowbite-react";
 import { FaSearch } from "react-icons/fa";
 import { PiPackageFill } from "react-icons/pi";
 import { TbHeartHandshake, TbShoppingCartPlus } from "react-icons/tb";
+import { useSelector } from "react-redux";
 
 export default function SideBar({ children }) {
-  return (
+  const { currentUser } = useSelector((state) => state.user);
+
+  return currentUser ? (
     <div className="flex h-screen">
       <Sidebar className="w-64 h-full">
         <Sidebar.Items>
@@ -15,9 +18,11 @@ export default function SideBar({ children }) {
             <Sidebar.Item href="/search-order" icon={PiPackageFill}>
               Search Order
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={TbHeartHandshake}>
-              Accept Donation
-            </Sidebar.Item>
+            {currentUser.role === "staff" && (
+              <Sidebar.Item href="/add-item" icon={TbHeartHandshake}>
+                Accept Donation
+              </Sidebar.Item>
+            )}
             <Sidebar.Item href="#" icon={TbShoppingCartPlus}>
               Start an Order
             </Sidebar.Item>
@@ -26,5 +31,7 @@ export default function SideBar({ children }) {
       </Sidebar>
       <main className="flex-1 p-4">{children}</main>
     </div>
+  ) : (
+    <>{children}</>
   );
 }
