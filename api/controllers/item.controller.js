@@ -1,4 +1,5 @@
 import db from "../db.js";
+import { errorHandler } from "../utils/errorHandler.js";
 
 export const getPieces = (req, res, next) => {
   const itemId = req.params.id;
@@ -46,6 +47,10 @@ export const getItems = (req, res, next) => {
 };
 
 export const createItem = (req, res, next) => {
+  if (req.user && req.user.role !== "staff") {
+    return next(errorHandler("Unauthorized", 401));
+  }
+  
   const {
     iDescription,
     photo,

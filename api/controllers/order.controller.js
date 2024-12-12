@@ -19,6 +19,10 @@ export const getOrder = async (req, res, next) => {
 };
 
 export const createOrder = async (req, res, next) => {
+  if (req.user && req.user.role !== "staff") {
+    return next(errorHandler("Unauthorized", 401));
+  }
+
   const { orderDate, supervisorID, clientID, items } = req.body;
 
   db.query(
