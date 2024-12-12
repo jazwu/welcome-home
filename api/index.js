@@ -3,6 +3,7 @@ import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import itemRoutes from "./routes/item.route.js";
 import categoryRoutes from "./routes/category.route.js";
+import ordrerRoutes from "./routes/order.route.js";
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/orders", ordrerRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

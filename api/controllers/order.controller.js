@@ -3,19 +3,50 @@ import db from "../db.js";
 export const getOrder = async (req, res, next) => {
   const orderId = req.params.id;
 
-  db.query(
-    "SELECT * FROM Ordered NATURAL JOIN ItemIn NATURAL JOIN Piece WHERE orderID = ?",
-    [orderId],
-    (error, results) => {
-      if (error) {
-        next(error);
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-      return res.status(200).json(results[0]);
-    }
-  );
+  const getOrderItems = (orderId) => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        "SELECT ItemID, orderID, orderDate, supervisor, client FROM Ordered NATURAL JOIN ItemIn WHERE orderID = ?",
+        [orderId],
+        (error, results) => {
+          if (error) {
+            reject(error);
+          }
+          resolve(results);
+        }
+      );
+    });
+  };
+
+  const getPieces = (itemId) => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        "SELECT * FROM Piece WHERE ItemID = ?",
+        [itemId],
+        (error, pieces) => {
+          if (error) {
+            reject(error);
+          }
+          resolve(pieces);
+        }
+      );
+    });
+  };
+
+  try {
+    const items = await getOrderItems(orderId);
+    const itemsWithPieces = await Promise.all(
+      items.map(async (item) => {
+        const pieces = await getPieces(item.ItemID);
+        item.pieces = pieces;
+        return item;
+      })
+    );
+
+    return res.status(200).json(itemsWithPieces);
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const createOrder = async (req, res, next) => {
