@@ -4,9 +4,9 @@ import SideBar from "./components/SideBar";
 import Home from "./pages/Home";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/Signup";
-import FindItem from "./pages/FindItem";
 import ItemsPage from "./pages/ItemsPage";
-import FindOrder from "./pages/FindOrder";
+import SearchItem from "./pages/SearchItem";
+import SearchOrder from "./pages/SearchOrder";
 
 function App() {
   return (
@@ -18,8 +18,8 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/items" element={<ItemsPage />} />
-          <Route path="/search-item" element={<FindItem />} />
-          <Route path="/search-order" element={<FindOrder />} />
+          <Route path="/search-item" element={<SearchItem />} />
+          <Route path="/search-order" element={<SearchOrder />} />
         </Routes>
       </SideBar>
     </BrowserRouter>
