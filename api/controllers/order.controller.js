@@ -1,49 +1,29 @@
 import db from "../db.js";
+import { errorHandler } from "../utils/errorHandler.js";
+import { getOrderItems, getItemDetails, getPieces } from "../utils/promise.js";
 
 export const getOrder = async (req, res, next) => {
   const orderId = req.params.id;
 
-  const getOrderItems = (orderId) => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        "SELECT ItemID, orderID, orderDate, supervisor, client FROM Ordered NATURAL JOIN ItemIn WHERE orderID = ?",
-        [orderId],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          }
-          resolve(results);
-        }
-      );
-    });
-  };
-
-  const getPieces = (itemId) => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        "SELECT * FROM Piece WHERE ItemID = ?",
-        [itemId],
-        (error, pieces) => {
-          if (error) {
-            reject(error);
-          }
-          resolve(pieces);
-        }
-      );
-    });
-  };
-
   try {
-    const items = await getOrderItems(orderId);
-    const itemsWithPieces = await Promise.all(
+    const order = await getOrderItems(orderId);
+    const items = order.items;
+    const itemsWithDetails = await Promise.all(
       items.map(async (item) => {
+        const itemDetails = await getItemDetails(item.ItemID);
+        return itemDetails;
+      })
+    );
+    const itemsWithPieces = await Promise.all(
+      itemsWithDetails.map(async (item) => {
         const pieces = await getPieces(item.ItemID);
         item.pieces = pieces;
         return item;
       })
     );
+    order.items = itemsWithPieces;
 
-    return res.status(200).json(itemsWithPieces);
+    return res.status(200).json(order);
   } catch (error) {
     return next(error);
   }
