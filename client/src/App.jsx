@@ -22,6 +22,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/shopping" element={<Shopping />} />
         </Route>
+        <Route path="/" element={<PublicRoute />}>
+          <Route index element={<SignIn />} />
+        </Route>
+        <Route path="/" element={<PrivateRoute />}>
+          <Route index element={<Dashboard />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
