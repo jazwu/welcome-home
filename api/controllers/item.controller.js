@@ -44,7 +44,6 @@ export const getItems = (req, res, next) => {
 };
 
 export const createItem = (req, res, next) => {
-  console.log(req.user);
   if (req.user && req.user.role !== "staff") {
     return next(errorHandler("Unauthorized", 401));
   }
@@ -59,8 +58,7 @@ export const createItem = (req, res, next) => {
     subCategory,
     donor,
     donateDate,
-  } = req.body.item;
-  const pieces = req.body.pieces;
+  } = req.body;
 
   db.query(
     "INSERT INTO Item (iDescription, photo, color, isNew, material, mainCategory, subCategory) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -76,29 +74,30 @@ export const createItem = (req, res, next) => {
           if (error) {
             return next(error);
           }
+          res.status(201).json({ message: "Item created" });
         }
       );
-      pieces.forEach((piece) => {
-        db.query(
-          "INSERT INTO Piece (ItemID, pieceNum, pDescription, length, width, height, roomNum, selfNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-          [
-            results.insertId,
-            piece.pieceNum,
-            piece.pDescription,
-            piece.length,
-            piece.width,
-            piece.height,
-            piece.roomNum,
-            piece.selfNum,
-          ],
-          (error) => {
-            if (error) {
-              return next(error);
-            }
-          }
-        );
-      });
-      res.status(201).json({ message: "Item created" });
+    }
+  );
+};
+
+export const createPiece = (req, res, next) => {
+  if (req.user && req.user.role !== "staff") {
+    return next(errorHandler("Unauthorized", 401));
+  }
+
+  const ItemID = req.params.ItemID;
+  const { pieceNum, pDescription, length, width, height, roomNum, shelfNum } =
+    req.body;
+
+  db.query(
+    "INSERT INTO Piece (ItemID, pieceNum, pDescription, length, width, height, roomNum, shelfNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [ItemID, pieceNum, pDescription, length, width, height, roomNum, shelfNum],
+    (error) => {
+      if (error) {
+        return next(error);
+      }
+      res.status(201).json({ message: `Piece created for Item #${ItemID}` });
     }
   );
 };
