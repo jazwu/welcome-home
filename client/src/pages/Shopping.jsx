@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import SideBar from "../components/CateSideBar";
+import SideBar from "../components/SideBarCategory";
 import ItemsPage from "../components/ItemsPage";
 import { Alert } from "flowbite-react";
 import { useSelector } from "react-redux";
