@@ -4,7 +4,6 @@ import PublicRoute from "./components/PublicRoute";
 
 import Header from "./components/Header";
 
-import Home from "./pages/Home";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
