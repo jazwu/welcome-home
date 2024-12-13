@@ -1,15 +1,18 @@
 import db from "../db.js";
 import { errorHandler } from "../utils/errorHandler.js";
-import { getPieces as getPiecesPromise } from "../utils/promise.js";
 
 export const getPieces = async (req, res, next) => {
   const itemId = req.params.id;
-  try {
-    const pieces = await getPiecesPromise(itemId);
-    res.status(200).json(pieces);
-  } catch (error) {
-    return next(error);
-  }
+  db.query(
+    "SELECT * FROM Piece WHERE ItemID = ?",
+    [itemId],
+    (error, results) => {
+      if (error) {
+        return next(error);
+      }
+      res.status(200).json({ pieces: results, total: results.length });
+    }
+  );
 };
 
 export const getItems = (req, res, next) => {
@@ -41,6 +44,7 @@ export const getItems = (req, res, next) => {
 };
 
 export const createItem = (req, res, next) => {
+  console.log(req.user);
   if (req.user && req.user.role !== "staff") {
     return next(errorHandler("Unauthorized", 401));
   }
@@ -53,22 +57,14 @@ export const createItem = (req, res, next) => {
     material,
     mainCategory,
     subCategory,
+    donor,
+    donateDate,
   } = req.body.item;
-  const { donor, donateDate } = req.body.donation;
   const pieces = req.body.pieces;
 
   db.query(
-    "INSERT INTO Item (iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [
-      iDescription,
-      photo,
-      color,
-      isNew,
-      hasPieces,
-      material,
-      mainCategory,
-      subCategory,
-    ],
+    "INSERT INTO Item (iDescription, photo, color, isNew, material, mainCategory, subCategory) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [iDescription, photo, color, isNew, material, mainCategory, subCategory],
     (error, results) => {
       if (error) {
         return next(error);

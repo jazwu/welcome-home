@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOutSuccess } from "../redux/user/userSlice";
 import { useEffect, useState } from "react";
+import { FiShoppingCart } from "react-icons/fi";
+import ShoppingCard from "./ShoppingCard";
 
 const SubCategory = ({ mainCategory }) => {
   const [subCategories, setSubCategories] = useState([]);
@@ -43,6 +45,7 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [categories, setCategories] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const path = useLocation().pathname;
   const dispatch = useDispatch();
@@ -81,45 +84,59 @@ export default function Header() {
     }
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Navbar className="border-b-2">
-      <Link
-        to="/"
-        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold"
-      >
-        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded text-white">
-          Welcome
-        </span>
-        Home
-      </Link>
-      <div className="flex gap-2 md:order-2">
-        {currentUser ? (
-          <Dropdown arrowIcon={false} inline label={<Avatar rounded />}>
-            <Dropdown.Header>
-              <span className="block text-sm">@{currentUser.username}</span>
-            </Dropdown.Header>
-            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-          </Dropdown>
-        ) : (
-          <Link to="/sign-in">
-            <Button gradientDuoTone="purpleToBlue" outline>
-              Sign In
-            </Button>
-          </Link>
-        )}
-        <Navbar.Toggle />
-      </div>
-      <Navbar.Collapse>
-        <Navbar.Link href="/" active={path === "/"}>
+    <>
+      <Navbar className="border-b-2">
+        <Link
+          to="/"
+          className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold"
+        >
+          <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded text-white">
+            Welcome
+          </span>
           Home
-        </Navbar.Link>
-        {currentUser?.role === "client" && (
+        </Link>
+        <div className="flex gap-2 md:order-2">
+          {currentUser ? (
+            <div className="flex gap-10">
+              <Dropdown arrowIcon={false} inline label={<Avatar rounded />}>
+                <Dropdown.Header>
+                  <span className="block text-sm">@{currentUser.username}</span>
+                </Dropdown.Header>
+                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+              </Dropdown>
+              {currentUser.role === "client" && (
+                <button
+                  className="text-gray-500 mt-1"
+                  onClick={() => setOpen((prev) => !prev)}
+                >
+                  <FiShoppingCart size={25} />
+                </button>
+              )}
+            </div>
+          ) : (
+            <Link to="/sign-in">
+              <Button gradientDuoTone="purpleToBlue" outline>
+                Sign In
+              </Button>
+            </Link>
+          )}
+          <Navbar.Toggle />
+        </div>
+        <Navbar.Collapse>
+          <Navbar.Link href="/" active={path === "/"}>
+            Home
+          </Navbar.Link>
           <Dropdown
             label=""
             inline
             trigger="hover"
             renderTrigger={() => (
-              <span style={{ cursor: "pointer" }}>All Categories</span>
+              <span style={{ cursor: "pointer" }}>Categories</span>
             )}
           >
             <Dropdown.Item href="/items?category=All">All</Dropdown.Item>
@@ -138,8 +155,9 @@ export default function Header() {
               </Dropdown.Item>
             ))}
           </Dropdown>
-        )}
-      </Navbar.Collapse>
-    </Navbar>
+        </Navbar.Collapse>
+      </Navbar>
+      <ShoppingCard open={open} onClose={handleClose} />
+    </>
   );
 }

@@ -15,14 +15,39 @@ export const logout = (req, res, next) => {
   }
 };
 
-export const getRole = (req, res, next) => {
+export const getUser = (req, res, next) => {
   const id = req.params.id;
 
-  db.query("SELECT roleID FROM Act WHERE userName = ?", [id], (err, result) => {
-    if (err) {
-      next(err);
-    } else {
-      res.status(200).json(result[0]);
+  db.query(
+    "SELECT userName, fname, lname, email, roleID FROM Person NATURAL JOIN Act WHERE userName = ?",
+    [id],
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      const newResults = {
+        userName: results[0].userName,
+        fname: results[0].fname,
+        lname: results[0].lname,
+        email: results[0].email,
+        role: results.map((result) => result.roleID),
+      };
+      res.status(200).json(newResults);
     }
-  });
+  );
+};
+
+export const addRole = (req, res, next) => {
+  const { userName, roleID } = req.params;
+
+  db.query(
+    "INSERT INTO Act (userName, roleID) VALUES (?, ?)",
+    [userName, roleID],
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).json({ message: "Role added successfully" });
+    }
+  );
 };
