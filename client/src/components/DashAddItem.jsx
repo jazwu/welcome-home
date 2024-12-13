@@ -234,7 +234,11 @@ export default function DashAddItem() {
         </Button>
       </form>
       {needRegister && (
-        <Modal show={modalOpen}>
+        <Modal
+          show={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onDismiss={() => setModalOpen(false)}
+        >
           <Modal.Header>Register as a donor</Modal.Header>
           <Modal.Body>
             <form className="flex-col gap-4">

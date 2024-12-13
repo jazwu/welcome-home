@@ -58,7 +58,7 @@ export default function Shopping() {
         <Alert className="font-medium">
           Hi <span className="font-bold">{currentUser.username}</span>! You are
           shopping for <span className="font-bold">{client}</span> on{" "}
-          {orderDate} <span className="font-bold">order ID {orderID}</span>.
+          {orderDate} with <span className="font-bold">order ID {orderID}</span>.
         </Alert>
         <ItemsPage category={category} subcategory={sub} />
       </main>
