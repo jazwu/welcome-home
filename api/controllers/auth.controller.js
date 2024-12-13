@@ -10,7 +10,7 @@ export const signup = (req, res, next) => {
   const { username, password, fname, lname, email, role } = req.body;
 
   if (!username || !password || !fname || !lname || !email) {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -20,14 +20,14 @@ export const signup = (req, res, next) => {
     [username, hashedPassword, fname, lname, email],
     (error) => {
       if (error) {
-        next(errorHandler(500, error.message));
+        return next(errorHandler(500, error.message));
       }
       db.query(
         "INSERT INTO Act (userName, roleID) VALUES (?, ?)",
         [username, role],
         (error) => {
           if (error) {
-            next(errorHandler(500, error.message));
+            return next(errorHandler(500, error.message));
           }
         }
       );
@@ -40,7 +40,7 @@ export const signin = (req, res, next) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
 
   db.query(
@@ -48,17 +48,17 @@ export const signin = (req, res, next) => {
     [username],
     (error, results) => {
       if (error) {
-        next(errorHandler(500, error.message));
+        return next(errorHandler(500, error.message));
       }
 
       if (results.length === 0) {
-        next(errorHandler(404, "User not found"));
+        return next(errorHandler(404, "User not found"));
       }
 
       const user = results[0];
 
       if (!bcryptjs.compareSync(password, user.password)) {
-        next(errorHandler(400, "Invalid password"));
+        return next(errorHandler(400, "Invalid password"));
       }
 
       db.query(
@@ -66,7 +66,7 @@ export const signin = (req, res, next) => {
         [username],
         (error, results) => {
           if (error) {
-            next(errorHandler(500, error.message));
+            return next(errorHandler(500, error.message));
           }
 
           const user = results[0];
