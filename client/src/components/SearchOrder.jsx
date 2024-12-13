@@ -73,7 +73,7 @@ export default function SearchOrder() {
       return setErrorMessage("Please enter a valid order ID");
     }
     fetchItems(inputText);
-    nav(`/search-order?id=${inputText}`);
+    nav(`/dashboard?tab=SearchOrder&id=${inputText}`);
   };
 
   return (
@@ -115,7 +115,7 @@ export default function SearchOrder() {
           {/* locations of all items */}
           {items.length !== 0 && (
             <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
-              <p className="my-3 text-sm font-serif">
+              <p className="my-3 text-sm text-gray-500 italic">
                 Ordered on {new Date(orderDate).toLocaleDateString()}, Ordered
                 By <span className="font-semibold">{clientID}</span>, Supervised
                 by <span className="font-semibold">{supervisorID}</span>

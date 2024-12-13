@@ -52,7 +52,7 @@ export default function SearchItem() {
       return setErrorMessage("Please enter a valid item ID");
     }
     fetchPieces(inputText);
-    nav(`/search-item?id=${inputText}`);
+    nav(`/dashboard?tab=SearchItem&id=${inputText}`);
   };
 
   return (
