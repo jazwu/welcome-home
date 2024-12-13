@@ -4,7 +4,7 @@ import { errorHandler } from "./errorHandler.js";
 export const getOrderItems = (orderId) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT ItemID, orderID, orderDate, supervisor, client FROM Ordered NATURAL JOIN ItemIn WHERE orderID = ?",
+      "SELECT ItemID, Ordered.orderID, orderDate, supervisor, client FROM Ordered LEFT JOIN ItemIn ON Ordered.orderID = ItemIn.orderID WHERE Ordered.orderID = ?",
       [orderId],
       (error, results) => {
         if (error) {

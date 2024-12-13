@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/:id/pieces", getPieces); // get all pieces of an item
 router.post("/:ItemID/pieces", verifyToken, createPiece); // add a new piece to an item
 
-router.get("/", getItems); // get all items
+router.get("/", getItems); // get available items
 router.post("/", verifyToken, createItem); // add a new item
 
 export default router;

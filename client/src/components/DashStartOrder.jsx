@@ -2,6 +2,7 @@ import { TextInput, Button, Alert } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { HiInformationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function DashStartOrder() {
   const { currentUser } = useSelector((state) => state.user);
@@ -9,6 +10,7 @@ export default function DashStartOrder() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [canStartOrder, setCanStartOrder] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +65,7 @@ export default function DashStartOrder() {
         setClientID("");
         setSuccessMessage(null);
         setCanStartOrder(false);
-        return;
+        navigate("/shopping", { state: { fromSource: true } });
       }
       setErrorMessage(data.message);
     } catch (error) {

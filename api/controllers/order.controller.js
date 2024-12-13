@@ -8,12 +8,19 @@ export const getOrder = async (req, res, next) => {
   try {
     const order = await getOrderItems(orderId);
     const items = order.items;
-    const itemsWithDetails = await Promise.all(
+
+    let itemsWithDetails = await Promise.all(
       items.map(async (item) => {
-        const itemDetails = await getItemDetails(item.ItemID);
-        return itemDetails;
+        try {
+          const itemDetails = await getItemDetails(item.ItemID);
+          return itemDetails;
+        } catch (error) {
+          return null;
+        }
       })
     );
+    itemsWithDetails = itemsWithDetails.filter((item) => item !== null);
+
     const itemsWithPieces = await Promise.all(
       itemsWithDetails.map(async (item) => {
         const pieces = await getPieces(item.ItemID);
@@ -54,6 +61,26 @@ export const createOrder = async (req, res, next) => {
       }
 
       return res.status(201).json({ orderID: results.insertId });
+    }
+  );
+};
+
+export const addItems = async (req, res, next) => {
+  if (req.user && !req.user.roles.includes("staff")) {
+    return next(errorHandler({ message: "Unauthorized", statusCode: 401 }));
+  }
+
+  const orderID = req.params.orderID;
+  const ItemID = req.body.ItemID;
+  db.query(
+    "INSERT INTO ItemIn (orderID, ItemID) VALUES (?, ?)",
+    [orderID, ItemID],
+    (error, results) => {
+      if (error) {
+        return next(error);
+      }
+
+      return res.status(201).json({ message: "Item added to order" });
     }
   );
 };

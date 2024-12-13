@@ -1,29 +1,34 @@
 import { Button, Badge } from "flowbite-react";
-import { useEffect, useMemo } from "react";
 
 export default function ItemCard({ item }) {
-  const imgURL = useMemo(() => {
-    if (item.photo?.data) {
-      const blob = new Blob([new Uint8Array(item.photo.data)], {
-        type: "image/png",
-      });
-      return URL.createObjectURL(blob);
-    }
-    return null;
-  }, [item.photo]);
+  const orderID = sessionStorage.getItem("orderID");
 
-  useEffect(() => {
-    return () => {
-      URL.revokeObjectURL(imgURL);
-    };
-  }, [imgURL]);
+  const addToOrder = async () => {
+    try {
+      const res = await fetch(`/api/orders/${orderID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ItemID: item.ItemID }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+      alert(`Item ${item.ItemID} added to order ${orderID}`);
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <div className="relative group min-w-32 flex flex-col border shadow-lg rounded-md overflow-hidden">
+    <div className="flex flex-col border shadow-lg rounded-md overflow-hidden min-w-72">
       <img
-        src={imgURL}
+        src="/public/item-placeholder.png"
         alt="image"
-        className="w-full h-80 group-hover:h-72 transition-all duration-300 z-20"
+        className="w-full h-60 object-cover"
       />
       <div className="m-3 flex flex-col gap-1">
         <h5 className="text-xl font-semibold tracking-tight text-gray-900">
@@ -40,9 +45,10 @@ export default function ItemCard({ item }) {
           gradientDuoTone="purpleToPink"
           outline
           size="sm"
-          className="absolute bottom-[-200px] group-hover:bottom-0 left-1 right-1 z-10 transition-all duration-300"
+          className="mt-2"
+          onClick={addToOrder}
         >
-          Add to Cart
+          Add to Order
         </Button>
       </div>
     </div>

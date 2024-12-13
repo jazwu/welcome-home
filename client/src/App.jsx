@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 
@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Shopping from "./pages/Shopping";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/shopping" element={<Shopping />} />
         </Route>
       </Routes>
     </BrowserRouter>

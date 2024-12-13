@@ -125,30 +125,11 @@ export default function Header() {
           <Navbar.Link href="/" active={path === "/"}>
             Home
           </Navbar.Link>
-          <Dropdown
-            label=""
-            inline
-            trigger="hover"
-            renderTrigger={() => (
-              <span style={{ cursor: "pointer" }}>Categories</span>
-            )}
-          >
-            <Dropdown.Item href="/items?category=All">All</Dropdown.Item>
-            {categories.map((category, index) => (
-              <Dropdown.Item key={index} href={`/items?category=${category}`}>
-                <Dropdown
-                  label=""
-                  trigger="hover"
-                  placement="right"
-                  renderTrigger={() => (
-                    <span style={{ cursor: "pointer" }}>{category}</span>
-                  )}
-                >
-                  <SubCategory mainCategory={category} />
-                </Dropdown>
-              </Dropdown.Item>
-            ))}
-          </Dropdown>
+          {currentUser && (
+            <Navbar.Link href="/dashboard" active={path === "/dashboard"}>
+              Dashboard
+            </Navbar.Link>
+          )}
         </Navbar.Collapse>
       </Navbar>
       <ShoppingCard open={open} onClose={handleClose} />

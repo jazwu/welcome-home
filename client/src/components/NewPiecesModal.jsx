@@ -177,16 +177,19 @@ export default function NewPiecesModal({ item, show, onClose }) {
               <Table.HeadCell># Shelf</Table.HeadCell>
             </Table.Head>
             <Table.Body>
-              {addedPieces.map((piece) => (
-                <Table.Row key={piece.pieceNum}>
-                  <Table.Cell>{piece.pieceNum}</Table.Cell>
-                  <Table.Cell>{piece.length}</Table.Cell>
-                  <Table.Cell>{piece.width}</Table.Cell>
-                  <Table.Cell>{piece.height}</Table.Cell>
-                  <Table.Cell>{piece.roomNum}</Table.Cell>
-                  <Table.Cell>{piece.shelfNum}</Table.Cell>
-                </Table.Row>
-              ))}
+              {addedPieces
+                .slice()
+                .reverse()
+                .map((piece) => (
+                  <Table.Row key={piece.pieceNum}>
+                    <Table.Cell>{piece.pieceNum}</Table.Cell>
+                    <Table.Cell>{piece.length}</Table.Cell>
+                    <Table.Cell>{piece.width}</Table.Cell>
+                    <Table.Cell>{piece.height}</Table.Cell>
+                    <Table.Cell>{piece.roomNum}</Table.Cell>
+                    <Table.Cell>{piece.shelfNum}</Table.Cell>
+                  </Table.Row>
+                ))}
             </Table.Body>
           </Table>
         )}

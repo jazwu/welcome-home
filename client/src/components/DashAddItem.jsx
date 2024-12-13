@@ -203,6 +203,7 @@ export default function DashAddItem() {
       >
         <TextInput
           className="flex-1"
+          type="text"
           placeholder="Please enter the donor username"
           value={donorID}
           onChange={(e) => setDonorID(e.target.value)}
@@ -387,26 +388,29 @@ export default function DashAddItem() {
                 </Table.HeadCell>
               </Table.Head>
               <Table.Body>
-                {addedItem.map((item) => (
-                  <Table.Row key={item.ItemID}>
-                    <Table.Cell>{item.ItemID}</Table.Cell>
-                    <Table.Cell>{item.iDescription}</Table.Cell>
-                    <Table.Cell>{item.mainCategory}</Table.Cell>
-                    <Table.Cell>{item.subCategory}</Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        size="sm"
-                        color="success"
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setShowModal(true);
-                        }}
-                      >
-                        Add Pieces
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
+                {addedItem
+                  .slice()
+                  .reverse()
+                  .map((item) => (
+                    <Table.Row key={item.ItemID}>
+                      <Table.Cell>{item.ItemID}</Table.Cell>
+                      <Table.Cell>{item.iDescription}</Table.Cell>
+                      <Table.Cell>{item.mainCategory}</Table.Cell>
+                      <Table.Cell>{item.subCategory}</Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          size="sm"
+                          color="success"
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setShowModal(true);
+                          }}
+                        >
+                          Add Pieces
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
               </Table.Body>
             </Table>
           )}

@@ -18,17 +18,17 @@ export const getPieces = async (req, res, next) => {
 export const getItems = (req, res, next) => {
   const { category, sub: subcategory, limit = 10, offset = 0 } = req.query;
 
-  let query = "SELECT * FROM Item";
+  let query =
+    "SELECT Item.ItemID, iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory FROM Item LEFT JOIN ItemIn ON Item.ItemID = ItemIn.ItemID WHERE ItemIn.orderID IS NULL ";
   let queryParams = [];
 
-  if (category && category.length > 0 && category !== "All") {
-    query += " WHERE mainCategory = ?";
+  if (category) {
+    query += "AND mainCategory = ?";
     queryParams.push(category);
   }
 
-  if (subcategory && subcategory.length > 0) {
-    query += category && category.length > 0 ? " AND" : " WHERE";
-    query += " subCategory = ?";
+  if (category && subcategory) {
+    query += "AND subCategory = ?";
     queryParams.push(subcategory);
   }
 
@@ -39,6 +39,7 @@ export const getItems = (req, res, next) => {
     if (error) {
       return next(error);
     }
+    console.log(results);
     res.status(200).json({ items: results, total: results.length });
   });
 };
@@ -74,14 +75,12 @@ export const createItem = (req, res, next) => {
           if (error) {
             return next(error);
           }
-          res
-            .status(201)
-            .json({
-              ItemID: results.insertId,
-              iDescription,
-              mainCategory,
-              subCategory,
-            });
+          res.status(201).json({
+            ItemID: results.insertId,
+            iDescription,
+            mainCategory,
+            subCategory,
+          });
         }
       );
     }
