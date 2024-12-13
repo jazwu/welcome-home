@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HiInformationCircle } from "react-icons/hi";
 
-export default function SearchOrder() {
+export default function DashSearchOrder() {
   const [orderID, setOrderID] = useState("");
   const [orderDate, setOrderDate] = useState("");
   const [supervisorID, setSupervisorID] = useState("");

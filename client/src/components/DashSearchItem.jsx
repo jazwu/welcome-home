@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HiInformationCircle } from "react-icons/hi";
 
-export default function SearchItem() {
+export default function DashSearchItem() {
   const [itemID, setItemID] = useState("");
   const [pieces, setPieces] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);

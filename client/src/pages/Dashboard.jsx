@@ -1,9 +1,10 @@
-import SearchItem from "../components/SearchItem";
-import SearchOrder from "../components/SearchOrder";
-import AddItem from "../components/AddItem";
 import { useLocation } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import { useEffect, useState } from "react";
+
+import DashAddItem from "../components/DashAddItem";
+import DashSearchItem from "../components/DashSearchItem";
+import DashSearchOrder from "../components/DashSearchOrder";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -23,9 +24,9 @@ export default function Dashboard() {
 
       {/* main content */}
       <main className="flex-1 p-4">
-        {(tab === "SearchItem" || !tab) && <SearchItem />}
-        {tab === "SearchOrder" && <SearchOrder />}
-        {tab === "AddItem" && <AddItem />}
+        {(tab === "SearchItem" || !tab) && <DashSearchItem />}
+        {tab === "SearchOrder" && <DashSearchOrder />}
+        {tab === "AddItem" && <DashAddItem />}
       </main>
     </div>
   );
