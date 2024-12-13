@@ -1,9 +1,8 @@
-import { Navbar, Button, Avatar, Dropdown, Popover } from "flowbite-react";
+import { Navbar, Button, Avatar, Dropdown, Badge } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOutSuccess } from "../redux/user/userSlice";
 import { useEffect, useState } from "react";
-import { FiShoppingCart } from "react-icons/fi";
 import ShoppingCard from "./ShoppingCard";
 
 const SubCategory = ({ mainCategory }) => {
@@ -102,20 +101,15 @@ export default function Header() {
         </Link>
         <div className="flex gap-2 md:order-2">
           {currentUser ? (
-            <div className="flex gap-10">
+            <div className="flex gap-10 justify-center items-center">
               <Dropdown arrowIcon={false} inline label={<Avatar rounded />}>
                 <Dropdown.Header>
                   <span className="block text-sm">@{currentUser.username}</span>
                 </Dropdown.Header>
                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
               </Dropdown>
-              {currentUser.role === "client" && (
-                <button
-                  className="text-gray-500 mt-1"
-                  onClick={() => setOpen((prev) => !prev)}
-                >
-                  <FiShoppingCart size={25} />
-                </button>
+              {currentUser.roles.includes("staff") && (
+                <Badge size="sm">Staff</Badge>
               )}
             </div>
           ) : (
