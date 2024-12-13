@@ -44,7 +44,7 @@ export const getItems = (req, res, next) => {
 };
 
 export const createItem = (req, res, next) => {
-  if (req.user && req.user.role !== "staff") {
+  if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler("Unauthorized", 401));
   }
 
@@ -74,7 +74,14 @@ export const createItem = (req, res, next) => {
           if (error) {
             return next(error);
           }
-          res.status(201).json({ message: "Item created" });
+          res
+            .status(201)
+            .json({
+              ItemID: results.insertId,
+              iDescription,
+              mainCategory,
+              subCategory,
+            });
         }
       );
     }
@@ -82,7 +89,7 @@ export const createItem = (req, res, next) => {
 };
 
 export const createPiece = (req, res, next) => {
-  if (req.user && req.user.role !== "staff") {
+  if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler("Unauthorized", 401));
   }
 

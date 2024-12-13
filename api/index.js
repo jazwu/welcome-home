@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.route.js";
 import itemRoutes from "./routes/item.route.js";
 import categoryRoutes from "./routes/category.route.js";
 import ordrerRoutes from "./routes/order.route.js";
+import locationRoutes from "./routes/location.route.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", ordrerRoutes);
+app.use("/api/rooms", locationRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

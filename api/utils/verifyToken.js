@@ -12,6 +12,7 @@ export const verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
     if (error) {
+      console.error(error.message);
       return res.status(401).json({ message: "Unauthorized" });
     }
     req.user = decoded;

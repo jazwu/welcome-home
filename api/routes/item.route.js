@@ -9,10 +9,10 @@ import { verifyToken } from "../utils/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/:id/pieces", getPieces);
-router.post("/:ItemID/pieces", verifyToken, createPiece);
+router.get("/:id/pieces", getPieces); // get all pieces of an item
+router.post("/:ItemID/pieces", verifyToken, createPiece); // add a new piece to an item
 
-router.get("/", getItems);
-router.post("/", verifyToken, createItem);
+router.get("/", getItems); // get all items
+router.post("/", verifyToken, createItem); // add a new item
 
 export default router;

@@ -13,6 +13,10 @@ export const signup = (req, res, next) => {
     return next(errorHandler(400, "All fields are required"));
   }
 
+  if (!role) {
+    return next(errorHandler(400, "Role is required"));
+  }
+
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   db.query(
@@ -70,9 +74,10 @@ export const signin = (req, res, next) => {
           }
 
           const user = results[0];
+          const roles = results.map((result) => result.roleID);
 
           const token = jwt.sign(
-            { username: user.userName, role: user.roleID },
+            { username: user.userName, roles: roles },
             process.env.JWT_SECRET,
             {
               expiresIn: "1h",
@@ -84,7 +89,7 @@ export const signin = (req, res, next) => {
             .cookie("access_token", token, {
               httpOnly: true,
             })
-            .json({ user: { username: user.userName, role: user.roleID } });
+            .json({ user: { username: user.userName, roles: roles } });
         }
       );
     }

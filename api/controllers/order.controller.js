@@ -30,7 +30,7 @@ export const getOrder = async (req, res, next) => {
 };
 
 export const createOrder = async (req, res, next) => {
-  if (req.user && req.user.role !== "staff") {
+  if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler({ message: "Unauthorized", statusCode: 401 }));
   }
 

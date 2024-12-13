@@ -25,12 +25,17 @@ export const getUser = (req, res, next) => {
       if (err) {
         return next(err);
       }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
       const newResults = {
         userName: results[0].userName,
         fname: results[0].fname,
         lname: results[0].lname,
         email: results[0].email,
-        role: results.map((result) => result.roleID),
+        roles: results.map((result) => result.roleID),
       };
       res.status(200).json(newResults);
     }
