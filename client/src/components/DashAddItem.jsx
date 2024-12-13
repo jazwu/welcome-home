@@ -216,7 +216,6 @@ export default function DashAddItem() {
         <Button
           size="md"
           gradientDuoTone="purpleToPink"
-          type="submit"
           className="w-46"
           onClick={addDonorRole}
           disabled={!needRole}
@@ -226,7 +225,6 @@ export default function DashAddItem() {
         <Button
           size="md"
           gradientDuoTone="purpleToPink"
-          type="submit"
           className="w-46"
           onClick={() => setModalOpen(true)}
           disabled={!needRegister}

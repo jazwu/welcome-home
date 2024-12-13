@@ -29,32 +29,31 @@ export const getOrder = async (req, res, next) => {
   }
 };
 
+export const getOrders = async (req, res, next) => {
+  db.query(`SELECT * FROM Ordered`, (error, results) => {
+    if (error) {
+      return next(error);
+    }
+
+    return res.status(200).json(results);
+  });
+};
+
 export const createOrder = async (req, res, next) => {
   if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler({ message: "Unauthorized", statusCode: 401 }));
   }
 
-  const { orderDate, supervisorID, clientID, items } = req.body;
-
+  const { supervisor, client, orderDate } = req.body;
   db.query(
-    "INSERT INTO Ordered (orderDate, supervisor, client) VALUES (?, ?, ?)",
-    [orderDate, supervisorID, clientID],
+    "INSERT INTO Ordered (supervisor, client, orderDate) VALUES (?, ?, ?)",
+    [supervisor, client, orderDate],
     (error, results) => {
       if (error) {
         return next(error);
       }
-      items.forEach((item) => {
-        db.query(
-          "INSERT INTO ItemIn (orderID, ItemID) VALUES (?, ?)",
-          [results.insertId, item.ItemID],
-          (error, results) => {
-            if (error) {
-              return next(error);
-            }
-          }
-        );
-      });
-      return res.status(201).json({ message: "Order created" });
+
+      return res.status(201).json({ orderID: results.insertId });
     }
   );
 };

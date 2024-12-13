@@ -30,7 +30,7 @@ export default function SideBar({ tab }) {
             Accept Donation
           </Sidebar.Item>
           <Sidebar.Item
-            href="#"
+            href="/dashboard?tab=StartOrder"
             icon={TbShoppingCartPlus}
             active={tab === "StartOrder"}
           >

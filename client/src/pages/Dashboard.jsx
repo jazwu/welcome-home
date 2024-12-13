@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import DashAddItem from "../components/DashAddItem";
 import DashSearchItem from "../components/DashSearchItem";
 import DashSearchOrder from "../components/DashSearchOrder";
+import DashStartOrder from "../components/DashStartOrder";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -27,6 +28,7 @@ export default function Dashboard() {
         {(tab === "SearchItem" || !tab) && <DashSearchItem />}
         {tab === "SearchOrder" && <DashSearchOrder />}
         {tab === "AddItem" && <DashAddItem />}
+        {tab === "StartOrder" && <DashStartOrder />}
       </main>
     </div>
   );
