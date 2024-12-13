@@ -1,25 +1,62 @@
-import { Alert, Button, Spinner, Table, TextInput } from "flowbite-react";
+import {
+  Alert,
+  Button,
+  Spinner,
+  Table,
+  TextInput,
+  Checkbox,
+  Label,
+  Select,
+} from "flowbite-react";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { HiInformationCircle } from "react-icons/hi";
 
 export default function DashSearchItem() {
-  const [itemID, setItemID] = useState("");
   const [pieces, setPieces] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [allItems, setAllItems] = useState([]);
+  const [onePiece, setOnePiece] = useState(false);
+  const [items, setItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState("");
 
-  const location = useLocation();
-  const nav = useNavigate();
+  useEffect(() => {
+    const fetchItem = async (id) => {
+      try {
+        const res = await fetch(`/api/items/pieces`);
+        const data = await res.json();
+        if (res.ok) {
+          setAllItems(data);
+          setItems(data);
+        } else {
+          setErrorMessage(data.message);
+        }
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+    };
+    fetchItem();
+  }, []);
+
+  useEffect(() => {
+    if (onePiece) {
+      setItems(allItems.filter((item) => item.pieces.length === 1));
+    } else {
+      setItems(allItems);
+    }
+  }, [onePiece]);
 
   const fetchPieces = async (id) => {
     try {
       setErrorMessage(null);
       setLoading(true);
-      const res = await fetch(`/api/items/${id}`);
+      const res = await fetch(`/api/items/${id}/pieces`);
       const data = await res.json();
       if (res.ok) {
-        setPieces(data);
+        setPieces(data.pieces);
+        if (data.pieces.length === 0) {
+          setErrorMessage("No such item");
+        }
       } else {
         setPieces([]);
         setErrorMessage(data.message);
@@ -32,27 +69,11 @@ export default function DashSearchItem() {
     }
   };
 
-  useEffect(() => {
-    setErrorMessage(null);
-    setPieces([]);
-    const searchParams = new URLSearchParams(location.search);
-    const id = searchParams.get("id");
-    if (id) {
-      setItemID(id);
-      fetchPieces(id);
-    }
-  }, [location.search]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage(null);
-    const inputText = itemID.trim();
-    setItemID(inputText);
-    if (!inputText) {
-      return setErrorMessage("Please enter a valid item ID");
-    }
-    fetchPieces(inputText);
-    nav(`/dashboard?tab=SearchItem&id=${inputText}`);
+    const itemID = e.target.itemID.value;
+    setSelectedItem(itemID);
+    fetchPieces(itemID);
   };
 
   return (
@@ -71,27 +92,39 @@ export default function DashSearchItem() {
             </Alert>
           )}
           <h1 className="text-3xl my-10 mx-auto font-semibold">Find an Item</h1>
-          {/* Prompt to enter an item ID */}
-          <form
-            className="mx-auto flex justify-center items-center gap-3"
-            onSubmit={handleSubmit}
-          >
-            <TextInput
-              className="w-[20vw]"
-              placeholder="Please enter an item ID"
-              value={itemID}
-              onChange={(e) => setItemID(e.target.value)}
-              required
-              color={errorMessage ? "failure" : null}
-            />
-            <Button size="md" color="dark" pill type="submit">
-              Search
-            </Button>
+          {/* Prompt to select an item ID */}
+          <form className="mx-auto flex" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-5">
+              <div className="flex justify-center items-center gap-3">
+                <Select id="itemID" className="w-[20vw]" required>
+                  <option value="">All</option>
+                  {items.map((item) => (
+                    <option key={item.ItemID} value={item.ItemID}>
+                      {item.ItemID} - {item.iDescription}
+                    </option>
+                  ))}
+                </Select>
+                <Button size="md" color="dark" pill type="submit">
+                  Search
+                </Button>
+              </div>
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="onePiece"
+                  checked={onePiece}
+                  onChange={(e) => {
+                    setOnePiece(e.target.checked);
+                  }}
+                />
+                <Label>Only show item with one piece?</Label>
+              </div>
+            </div>
           </form>
 
           {/* locations of all pieces */}
           {pieces.length !== 0 ? (
-            <div className="mx-auto mt-10 w-[80vw] overflow-x-auto">
+            <div className="mx-auto mt-10 w-[80vw] overflow-x-auto flex flex-col gap-3">
+              <h4 className="font-medium">Pieces for Item #{selectedItem}</h4>
               <Table hoverable>
                 <Table.Head>
                   <Table.HeadCell># Piece</Table.HeadCell>

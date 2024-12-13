@@ -1,5 +1,6 @@
 import db from "../db.js";
 import { errorHandler } from "../utils/errorHandler.js";
+import { getPieces as getPiecesPromise } from "../utils/promise.js";
 
 export const getPieces = async (req, res, next) => {
   const itemId = req.params.id;
@@ -106,4 +107,20 @@ export const createPiece = (req, res, next) => {
       res.status(201).json({ message: `Piece created for Item #${ItemID}` });
     }
   );
+};
+
+export const getAllItems = (req, res, next) => {
+  db.query("SELECT * FROM Item", async (error, results) => {
+    if (error) {
+      return next(error);
+    }
+    const itemsWithPieces = await Promise.all(
+      results.map(async (item) => {
+        const pieces = await getPiecesPromise(item.ItemID);
+        item.pieces = pieces;
+        return item;
+      })
+    );
+    res.status(200).json(itemsWithPieces);
+  });
 };
