@@ -4,9 +4,11 @@ import authRoutes from "./routes/auth.route.js";
 import itemRoutes from "./routes/item.route.js";
 import categoryRoutes from "./routes/category.route.js";
 import ordrerRoutes from "./routes/order.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000!");
