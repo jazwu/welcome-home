@@ -1,19 +1,57 @@
-import db from "../db.js";
+import db, { query } from "../db.js";
 import { errorHandler } from "../utils/errorHandler.js";
 import { getPieces as getPiecesPromise } from "../utils/promise.js";
 
-export const getPieces = async (req, res, next) => {
-  const itemId = req.params.id;
-  db.query(
-    "SELECT * FROM Piece WHERE ItemID = ?",
-    [itemId],
-    (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      res.status(200).json({ pieces: results, total: results.length });
+export const getItemWithPieces = async (req, res, next) => {
+  const itemId = req.params.itemId;
+
+  try {
+    const itemRows = await query(
+      `SELECT Item.ItemID, iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory, pieceNum, pDescription, length, width, height, roomNum, shelfNum, pNotes
+      FROM Item LEFT JOIN Piece ON Item.ItemID = Piece.ItemID
+      WHERE Item.ItemID = ?`,
+      [itemId]
+    );
+
+    if (itemRows.length === 0) {
+      return next(errorHandler(404, "Item not found"));
     }
-  );
+
+    const pieces = itemRows
+      .map((item) => {
+        if (!item.pieceNum) {
+          return null;
+        }
+        return {
+          pieceNum: item.pieceNum,
+          pDescription: item.pDescription,
+          length: item.length,
+          width: item.width,
+          height: item.height,
+          roomNum: item.roomNum,
+          shelfNum: item.shelfNum,
+          pNotes: item.pNotes,
+        };
+      })
+      .filter((piece) => piece !== null);
+
+    const itemWithPieces = {
+      ItemID: itemRows[0].ItemID,
+      iDescription: itemRows[0].iDescription,
+      photo: itemRows[0].photo,
+      color: itemRows[0].color,
+      isNew: itemRows[0].isNew,
+      hasPieces: itemRows[0].hasPieces,
+      material: itemRows[0].material,
+      mainCategory: itemRows[0].mainCategory,
+      subCategory: itemRows[0].subCategory,
+      pieces,
+    };
+
+    res.status(200).json(itemWithPieces);
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const getItems = (req, res, next) => {

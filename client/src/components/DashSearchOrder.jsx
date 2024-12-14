@@ -19,22 +19,38 @@ export default function DashSearchOrder() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [pieces, setPieces] = useState([]);
 
   const location = useLocation();
   const nav = useNavigate();
 
   useEffect(() => {
-    if (selectedItem) {
+    const fetchPieces = async (itemId) => {
+      try {
+        const res = await fetch(`/api/items/${itemId}/pieces`);
+        const data = await res.json();
+        if (res.ok) {
+          setPieces(data.pieces);
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (selectedItemId) {
       setShowModal(true);
+      fetchPieces(selectedItemId);
     }
-  }, [selectedItem]);
+  }, [selectedItemId]);
 
   const fetchItems = async (id) => {
     try {
       setErrorMessage(null);
       setLoading(true);
-      const res = await fetch(`/api/orders/${id}`);
+      const res = await fetch(`/api/orders/${id}/items`);
       const data = await res.json();
       if (res.ok) {
         setItems(data.items);
@@ -142,7 +158,7 @@ export default function DashSearchOrder() {
                           size="sm"
                           color="light"
                           pill
-                          onClick={() => setSelectedItem(item)}
+                          onClick={() => setSelectedItemId(item.ItemID)}
                         >
                           View
                         </Button>
@@ -155,16 +171,16 @@ export default function DashSearchOrder() {
           )}
         </div>
       )}
-      {selectedItem && (
+      {selectedItemId && (
         <Modal
           show={showModal}
           onClose={() => {
             setShowModal(false);
-            setSelectedItem(null);
+            setSelectedItemId(null);
           }}
           dismissible
         >
-          <Modal.Header>Item #{selectedItem.ItemID} includes</Modal.Header>
+          <Modal.Header>Item #{selectedItemId} includes</Modal.Header>
           <Modal.Body>
             <Table hoverable>
               <Table.Head>
@@ -173,7 +189,7 @@ export default function DashSearchOrder() {
                 <Table.HeadCell># shelf</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y">
-                {selectedItem.pieces.map((piece) => (
+                {pieces.map((piece) => (
                   <Table.Row key={piece.pieceNum}>
                     <Table.Cell>{piece.pieceNum}</Table.Cell>
                     <Table.Cell>{piece.roomNum}</Table.Cell>
