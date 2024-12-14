@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOutSuccess } from "../redux/user/userSlice";
 import { useEffect, useState } from "react";
-import ShoppingCard from "./ShoppingCard";
 
 const SubCategory = ({ mainCategory }) => {
   const [subCategories, setSubCategories] = useState([]);
@@ -129,7 +128,6 @@ export default function Header() {
           )}
         </Navbar.Collapse>
       </Navbar>
-      <ShoppingCard open={open} onClose={handleClose} />
     </>
   );
 }
