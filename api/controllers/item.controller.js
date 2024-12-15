@@ -1,6 +1,6 @@
-import db, { query } from "../db.js";
+import db, { query, getConnection } from "../db.js";
 import { errorHandler } from "../utils/errorHandler.js";
-import { getPieces as getPiecesPromise } from "../utils/promise.js";
+import util from "util";
 
 export const getItemWithPieces = async (req, res, next) => {
   const itemId = req.params.itemId;
@@ -94,7 +94,7 @@ export const getAvailableItems = (req, res, next) => {
   });
 };
 
-export const createItem = (req, res, next) => {
+export const createItem = async (req, res, next) => {
   if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler("Unauthorized", 401));
   }
@@ -111,49 +111,64 @@ export const createItem = (req, res, next) => {
     donateDate,
   } = req.body;
 
-  db.query(
-    "INSERT INTO Item (iDescription, photo, color, isNew, material, mainCategory, subCategory) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [iDescription, photo, color, isNew, material, mainCategory, subCategory],
-    (error, results) => {
-      if (error) {
-        return next(error);
-      }
-      db.query(
-        "INSERT INTO DonatedBy (ItemID, userName, donateDate) VALUES (?, ?, ?)",
-        [results.insertId, donor, donateDate],
-        (error) => {
-          if (error) {
-            return next(error);
-          }
-          res.status(201).json({
-            ItemID: results.insertId,
-            iDescription,
-            mainCategory,
-            subCategory,
-          });
-        }
-      );
+  let connection;
+
+  try {
+    connection = await getConnection();
+  } catch (error) {
+    return next(error);
+  }
+
+  const beginTransaction = util
+    .promisify(connection.beginTransaction)
+    .bind(connection);
+  const commit = util.promisify(connection.commit).bind(connection);
+  const rollback = util.promisify(connection.rollback).bind(connection);
+
+  try {
+    await beginTransaction();
+    const newItem = await query(
+      "INSERT INTO Item (iDescription, photo, color, isNew, material, mainCategory, subCategory) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [iDescription, photo, color, isNew, material, mainCategory, subCategory]
+    );
+    await query(
+      "INSERT INTO DonatedBy (ItemID, userName, donateDate) VALUES (?, ?, ?)",
+      [newItem.insertId, donor, donateDate]
+    );
+    await commit();
+    res.status(201).json({
+      itemId: newItem.insertId,
+      iDescription,
+      mainCategory,
+      subCategory,
+    });
+  } catch (error) {
+    try {
+      await rollback();
+    } catch (rollbackError) {
+      return next(rollbackError);
     }
-  );
+    return next(error);
+  }
 };
 
-export const createPiece = (req, res, next) => {
+export const addPiece = (req, res, next) => {
   if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler("Unauthorized", 401));
   }
 
-  const ItemID = req.params.ItemID;
+  const itemId = req.params.itemId;
   const { pieceNum, pDescription, length, width, height, roomNum, shelfNum } =
     req.body;
 
   db.query(
     "INSERT INTO Piece (ItemID, pieceNum, pDescription, length, width, height, roomNum, shelfNum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    [ItemID, pieceNum, pDescription, length, width, height, roomNum, shelfNum],
+    [itemId, pieceNum, pDescription, length, width, height, roomNum, shelfNum],
     (error) => {
       if (error) {
         return next(error);
       }
-      res.status(201).json({ message: `Piece created for Item #${ItemID}` });
+      res.status(201).json({ message: `Piece created for Item #${itemId}` });
     }
   );
 };

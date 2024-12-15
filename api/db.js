@@ -28,6 +28,9 @@ pool.getConnection((err, connection) => {
   return;
 });
 
+console.log("Connected to database!");
+
 export const query = util.promisify(pool.query).bind(pool);
+export const getConnection = util.promisify(pool.getConnection).bind(pool);
 
 export default pool;

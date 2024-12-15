@@ -3,7 +3,7 @@ import {
   getItemWithPieces,
   getAvailableItems,
   createItem,
-  createPiece,
+  addPiece,
   getAllItems,
 } from "../controllers/item.controller.js";
 import { verifyToken } from "../utils/verifyToken.js";
@@ -13,9 +13,7 @@ const router = express.Router();
 router.get("/:itemId/pieces", getItemWithPieces);
 router.get("/", getAllItems);
 router.get("/available", getAvailableItems);
-router.post("/:ItemID/pieces", verifyToken, createPiece); // add a new piece to an item
-
-
-router.post("/", verifyToken, createItem); // add a new item
+router.post("/:itemId/pieces", verifyToken, addPiece);
+router.post("/", verifyToken, createItem);
 
 export default router;

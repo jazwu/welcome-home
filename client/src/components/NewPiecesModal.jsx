@@ -2,7 +2,7 @@ import { Modal, Button, Label, TextInput, Select, Table } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { getRooms, getShelves } from "../server/getLocations";
 
-export default function NewPiecesModal({ item, show, onClose }) {
+export default function NewPiecesModal({ itemId, show, onClose }) {
   const [pieceNum, setPieceNum] = useState(0);
   const [roomNum, setRoomNum] = useState("");
   const [shelfNum, setShelfNum] = useState(0);
@@ -16,7 +16,7 @@ export default function NewPiecesModal({ item, show, onClose }) {
   useEffect(() => {
     const fetchPieces = async () => {
       try {
-        const res = await fetch(`/api/items/${item.ItemID}/pieces`);
+        const res = await fetch(`/api/items/${itemId}/pieces`);
         const data = await res.json();
         if (res.ok) {
           setAddedPieces(data.pieces);
@@ -28,10 +28,10 @@ export default function NewPiecesModal({ item, show, onClose }) {
         console.error(error);
       }
     };
-    if (item) {
+    if (itemId) {
       fetchPieces();
     }
-  }, [item]);
+  }, [itemId]);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -56,13 +56,12 @@ export default function NewPiecesModal({ item, show, onClose }) {
     if (!pieceNum || !roomNum || !shelfNum || !length || !width || !height)
       return;
     try {
-      const res = await fetch(`/api/items/${item.ItemID}/pieces`, {
+      const res = await fetch(`/api/items/${itemId}/pieces`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ItemID: item.ItemID,
           pieceNum,
           length,
           width,
@@ -94,7 +93,7 @@ export default function NewPiecesModal({ item, show, onClose }) {
         <form className="flex flex-col p-5" onSubmit={addPiece}>
           <div className="flex justify-between items-center p-3">
             <h2 className="text-2xl font-semibold my-4">
-              Add Pieces for Item #{item.ItemID}
+              Add Pieces for Item #{itemId}
             </h2>
             <Button size="md" type="submit">
               Add

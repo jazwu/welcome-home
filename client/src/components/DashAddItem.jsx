@@ -25,11 +25,11 @@ export default function DashAddItem() {
   const [userFormData, setUserFormData] = useState({
     role: "donor",
   });
-  const [addedItem, setAddedItem] = useState([]);
+  const [addedItems, setAddedItems] = useState([]);
   const [iDescription, setIDescription] = useState("");
   const [mainCategory, setMainCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -154,7 +154,7 @@ export default function DashAddItem() {
       });
       const data = await res.json();
       if (res.ok) {
-        setAddedItem([...addedItem, data]);
+        setAddedItems([...addedItems, data]);
         setIDescription("");
         setMainCategory("");
         setSubCategory("");
@@ -380,7 +380,7 @@ export default function DashAddItem() {
               </div>
             </div>
           </form>
-          {addedItem.length !== 0 && (
+          {addedItems.length !== 0 && (
             <Table>
               <Table.Head>
                 <Table.HeadCell>Item ID</Table.HeadCell>
@@ -392,12 +392,12 @@ export default function DashAddItem() {
                 </Table.HeadCell>
               </Table.Head>
               <Table.Body>
-                {addedItem
+                {addedItems
                   .slice()
                   .reverse()
                   .map((item) => (
-                    <Table.Row key={item.ItemID}>
-                      <Table.Cell>{item.ItemID}</Table.Cell>
+                    <Table.Row key={item.itemId}>
+                      <Table.Cell>{item.itemId}</Table.Cell>
                       <Table.Cell>{item.iDescription}</Table.Cell>
                       <Table.Cell>{item.mainCategory}</Table.Cell>
                       <Table.Cell>{item.subCategory}</Table.Cell>
@@ -406,7 +406,7 @@ export default function DashAddItem() {
                           size="sm"
                           color="success"
                           onClick={() => {
-                            setSelectedItem(item);
+                            setSelectedItemId(item.itemId);
                             setShowModal(true);
                           }}
                         >
@@ -420,9 +420,9 @@ export default function DashAddItem() {
           )}
         </div>
       )}
-      {selectedItem && (
+      {selectedItemId && (
         <NewPiecesModal
-          item={selectedItem}
+          itemId={selectedItemId}
           show={showModal}
           onClose={onClose}
         />
