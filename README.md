@@ -1,7 +1,5 @@
 # WelcomeHome
 
-This project was developed as part of Fall 2024 CS-GY 6083: Principles of Database Systems (Prof. Phyllis Frankl) at NYU Tandon.
-
 **WelcomeHome** is a non-profit organization dedicated to supporting refugees and asylum seekers by providing essential housewares and furniture. This project aims to create a digital solution to help the organization efficiently manage donations, orders, deliveries, clients, donors, and volunteers.
 
 ![WelcomeHome Database](https://github.com/user-attachments/assets/94a32053-9bb1-444f-966c-2e972fe899a9)
