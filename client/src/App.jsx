@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
+import OnlyOrderIdRoute from "./components/OnlyOrderIdRoute";
 
 import Header from "./components/Header";
 
@@ -20,7 +21,9 @@ function App() {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/shopping" element={<Shopping />} />
+          <Route element={<OnlyOrderIdRoute />}>
+            <Route path="/shopping" element={<Shopping />} />
+          </Route>
         </Route>
         <Route path="/" element={<PublicRoute />}>
           <Route index element={<SignIn />} />

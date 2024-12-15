@@ -4,43 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { logOutSuccess } from "../redux/user/userSlice";
 import { useEffect, useState } from "react";
 
-const SubCategory = ({ mainCategory }) => {
-  const [subCategories, setSubCategories] = useState([]);
-
-  useEffect(() => {
-    const getSubCategories = async () => {
-      try {
-        const response = await fetch(`/api/categories/${mainCategory}`);
-        if (response.ok) {
-          const subCategories = await response.json();
-          setSubCategories(subCategories);
-        } else {
-          throw new Error("Failed to fetch sub categories");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getSubCategories();
-  }, [mainCategory]);
-
-  return (
-    <>
-      {subCategories.map((subCategory, index) => (
-        <Dropdown.Item
-          key={index}
-          href={`/items?category=${mainCategory}&sub=${subCategory}`}
-        >
-          {subCategory}
-        </Dropdown.Item>
-      ))}
-    </>
-  );
-};
-
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
+  const orderId = sessionStorage.getItem("orderId");
 
   const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
@@ -124,6 +90,12 @@ export default function Header() {
           {currentUser && (
             <Navbar.Link href="/dashboard" active={path === "/dashboard"}>
               Dashboard
+            </Navbar.Link>
+          )}
+
+          {currentUser && currentUser.roles.includes("staff") && orderId && (
+            <Navbar.Link href="/shopping" active={path === "/shopping"}>
+              Shopping
             </Navbar.Link>
           )}
         </Navbar.Collapse>

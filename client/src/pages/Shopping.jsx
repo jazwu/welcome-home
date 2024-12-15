@@ -8,17 +8,16 @@ import { useSelector } from "react-redux";
 export default function Shopping() {
   const { currentUser } = useSelector((state) => state.user);
   const location = useLocation();
-  const navigate = useNavigate();
   const [category, setCategory] = useState("");
   const [sub, setSub] = useState("");
-  const [orderID, setOrderID] = useState(sessionStorage.getItem("orderID"));
+  const [orderId, setorderId] = useState(sessionStorage.getItem("orderId"));
   const [client, setClient] = useState("");
   const [orderDate, setOrderDate] = useState("");
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const res = await fetch("/api/orders/" + orderID);
+        const res = await fetch(`/api/orders/${orderId}/items`);
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.message);
@@ -30,12 +29,9 @@ export default function Shopping() {
       }
     };
     fetchOrder();
-  }, [orderID]);
+  }, [orderId]);
 
   useEffect(() => {
-    // if (!location.state || !location.state.fromSource) {
-    //   navigate("/");
-    // }
     const searchParams = new URLSearchParams(location.search);
     const cate = searchParams.get("category");
     const sub = searchParams.get("sub");
@@ -45,7 +41,7 @@ export default function Shopping() {
     if (sub) {
       setSub(sub);
     }
-  }, [location.search, navigate]);
+  }, [location.search]);
 
   return (
     <div className="min-h-screen flex">
@@ -58,7 +54,8 @@ export default function Shopping() {
         <Alert className="font-medium">
           Hi <span className="font-bold">{currentUser.username}</span>! You are
           shopping for <span className="font-bold">{client}</span> on{" "}
-          {orderDate} with <span className="font-bold">order ID {orderID}</span>.
+          {orderDate} with <span className="font-bold">order ID {orderId}</span>
+          .
         </Alert>
         <ItemsPage category={category} subcategory={sub} />
       </main>

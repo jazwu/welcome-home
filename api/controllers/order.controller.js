@@ -47,16 +47,6 @@ export const getOrderWithItems = async (req, res, next) => {
   }
 };
 
-export const getOrders = async (req, res, next) => {
-  db.query(`SELECT * FROM Ordered`, (error, results) => {
-    if (error) {
-      return next(error);
-    }
-
-    return res.status(200).json(results);
-  });
-};
-
 export const createOrder = async (req, res, next) => {
   if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler({ message: "Unauthorized", statusCode: 401 }));
@@ -71,7 +61,9 @@ export const createOrder = async (req, res, next) => {
         return next(error);
       }
 
-      return res.status(201).json({ orderID: results.insertId });
+      return res
+        .status(201)
+        .json({ orderId: results.insertId });
     }
   );
 };

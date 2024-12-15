@@ -43,7 +43,7 @@ export default function DashStartOrder() {
     }
   };
 
-  const assignOrderID = async () => {
+  const assignorderId = async () => {
     try {
       const res = await fetch("/api/orders/", {
         method: "POST",
@@ -59,13 +59,13 @@ export default function DashStartOrder() {
       const data = await res.json();
       if (res.ok) {
         alert(
-          `Order ID ${data.orderID} has been assigned to ${clientID}. You can now add items to the order.`
+          `Order ID ${data.orderId} has been assigned to ${clientID}. You can now add items to the order.`
         );
-        sessionStorage.setItem("orderID", data.orderID);
+        sessionStorage.setItem("orderId", data.orderId);
         setClientID("");
         setSuccessMessage(null);
         setCanStartOrder(false);
-        navigate("/shopping", { state: { fromSource: true } });
+        navigate("/shopping");
       }
       setErrorMessage(data.message);
     } catch (error) {
@@ -112,7 +112,7 @@ export default function DashStartOrder() {
           type="submit"
           className="w-46"
           disabled={!canStartOrder}
-          onClick={assignOrderID}
+          onClick={assignorderId}
         >
           Assign an Order ID
         </Button>
