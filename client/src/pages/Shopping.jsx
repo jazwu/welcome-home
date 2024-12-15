@@ -7,10 +7,13 @@ import { useSelector } from "react-redux";
 
 export default function Shopping() {
   const { currentUser } = useSelector((state) => state.user);
+  const orderId = sessionStorage.getItem("orderId");
+
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [category, setCategory] = useState("");
   const [sub, setSub] = useState("");
-  const [orderId, setorderId] = useState(sessionStorage.getItem("orderId"));
   const [client, setClient] = useState("");
   const [orderDate, setOrderDate] = useState("");
 
@@ -28,7 +31,11 @@ export default function Shopping() {
         console.error(error);
       }
     };
-    fetchOrder();
+    if (orderId) {
+      fetchOrder();
+    } else {
+      navigate("/dashboard");
+    }
   }, [orderId]);
 
   useEffect(() => {
@@ -57,7 +64,7 @@ export default function Shopping() {
           {orderDate} with <span className="font-bold">order ID {orderId}</span>
           .
         </Alert>
-        <ItemsPage category={category} subcategory={sub} />
+        <ItemsPage category={category} subcategory={sub} orderId={orderId} />
       </main>
     </div>
   );

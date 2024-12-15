@@ -54,6 +54,19 @@ export const getItemWithPieces = async (req, res, next) => {
   }
 };
 
+export const getAllItems = async (req, res, next) => {
+  try {
+    const items = await query(
+      `SELECT Item.ItemID, iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory, COUNT(pieceNum) AS pieceCount
+     FROM Item LEFT JOIN Piece ON Item.ItemID = Piece.ItemID
+     GROUP BY Item.ItemID`
+    );
+    res.status(200).json(items);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const getItems = (req, res, next) => {
   const { category, sub: subcategory, limit = 10, offset = 0 } = req.query;
 
@@ -145,20 +158,4 @@ export const createPiece = (req, res, next) => {
       res.status(201).json({ message: `Piece created for Item #${ItemID}` });
     }
   );
-};
-
-export const getAllItems = (req, res, next) => {
-  db.query("SELECT * FROM Item", async (error, results) => {
-    if (error) {
-      return next(error);
-    }
-    const itemsWithPieces = await Promise.all(
-      results.map(async (item) => {
-        const pieces = await getPiecesPromise(item.ItemID);
-        item.pieces = pieces;
-        return item;
-      })
-    );
-    res.status(200).json(itemsWithPieces);
-  });
 };

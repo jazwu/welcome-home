@@ -1,22 +1,22 @@
 import { Button, Badge } from "flowbite-react";
 
 export default function ItemCard({ item }) {
-  const orderID = sessionStorage.getItem("orderID");
+  const orderId = sessionStorage.getItem("orderId");
 
   const addToOrder = async () => {
     try {
-      const res = await fetch(`/api/orders/${orderID}`, {
+      const res = await fetch(`/api/orders/${orderId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ItemID: item.ItemID }),
+        body: JSON.stringify({ itemId: item.ItemID }),
       });
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message);
       }
-      alert(`Item ${item.ItemID} added to order ${orderID}`);
+      alert(`Item ${item.ItemID} added to order ${orderId}`);
       window.location.reload();
     } catch (error) {
       console.error(error);

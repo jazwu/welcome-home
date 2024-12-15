@@ -61,23 +61,21 @@ export const createOrder = async (req, res, next) => {
         return next(error);
       }
 
-      return res
-        .status(201)
-        .json({ orderId: results.insertId });
+      return res.status(201).json({ orderId: results.insertId });
     }
   );
 };
 
-export const addItems = async (req, res, next) => {
+export const addOneItem = async (req, res, next) => {
   if (req.user && !req.user.roles.includes("staff")) {
     return next(errorHandler({ message: "Unauthorized", statusCode: 401 }));
   }
 
-  const orderID = req.params.orderID;
-  const ItemID = req.body.ItemID;
+  const orderId = req.params.orderId;
+  const itemId = req.body.itemId;
   db.query(
     "INSERT INTO ItemIn (orderID, ItemID) VALUES (?, ?)",
-    [orderID, ItemID],
+    [orderId, itemId],
     (error, results) => {
       if (error) {
         return next(error);

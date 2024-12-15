@@ -3,7 +3,6 @@ import {
   Button,
   Spinner,
   Table,
-  TextInput,
   Checkbox,
   Label,
   Select,
@@ -23,7 +22,7 @@ export default function DashSearchItem() {
   useEffect(() => {
     const fetchItem = async (id) => {
       try {
-        const res = await fetch(`/api/items/pieces`);
+        const res = await fetch(`/api/items`);
         const data = await res.json();
         if (res.ok) {
           setAllItems(data);
@@ -40,7 +39,7 @@ export default function DashSearchItem() {
 
   useEffect(() => {
     if (onePiece) {
-      setItems(allItems.filter((item) => item.pieces.length === 1));
+      setItems(allItems.filter((item) => item.pieceCount === 1));
     } else {
       setItems(allItems);
     }
@@ -71,9 +70,9 @@ export default function DashSearchItem() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const itemID = e.target.itemID.value;
-    setSelectedItem(itemID);
-    fetchPieces(itemID);
+    const itemId = e.target.itemId.value;
+    setSelectedItem(itemId);
+    fetchPieces(itemId);
   };
 
   return (
@@ -96,7 +95,7 @@ export default function DashSearchItem() {
           <form className="mx-auto flex" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-5">
               <div className="flex justify-center items-center gap-3">
-                <Select id="itemID" className="w-[20vw]" required>
+                <Select id="itemId" className="w-[20vw]" required>
                   <option value="">All</option>
                   {items.map((item) => (
                     <option key={item.ItemID} value={item.ItemID}>
