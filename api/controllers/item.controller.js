@@ -67,32 +67,30 @@ export const getAllItems = async (req, res, next) => {
   }
 };
 
-export const getItems = (req, res, next) => {
-  const { category, sub: subcategory, limit = 10, offset = 0 } = req.query;
+export const getAvailableItems = (req, res, next) => {
+  const { category, sub: subcategory } = req.query;
 
-  let query =
-    "SELECT Item.ItemID, iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory FROM Item LEFT JOIN ItemIn ON Item.ItemID = ItemIn.ItemID WHERE ItemIn.orderID IS NULL ";
+  let query = `SELECT Item.ItemID, iDescription, photo, color, isNew, hasPieces, material, mainCategory, subCategory 
+     FROM Item LEFT JOIN ItemIn ON Item.ItemID = ItemIn.ItemID 
+     WHERE ItemIn.orderID IS NULL `;
   let queryParams = [];
 
   if (category) {
-    query += "AND mainCategory = ?";
+    query += " AND mainCategory = ?";
     queryParams.push(category);
   }
 
   if (category && subcategory) {
-    query += "AND subCategory = ?";
+    query += " AND subCategory = ?";
     queryParams.push(subcategory);
   }
-
-  query += " LIMIT ? OFFSET ?";
-  queryParams.push(parseInt(limit), parseInt(offset));
 
   db.query(query, queryParams, (error, results) => {
     if (error) {
       return next(error);
     }
     console.log(results);
-    res.status(200).json({ items: results, total: results.length });
+    res.status(200).json(results);
   });
 };
 

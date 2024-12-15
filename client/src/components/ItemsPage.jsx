@@ -10,14 +10,14 @@ export default function ItemsPage({ category, subcategory }) {
     const fetchItems = async () => {
       try {
         const res = await fetch(
-          "/api/items?category=" + category + "&sub=" + subcategory
+          "/api/items/available/?category=" + category + "&sub=" + subcategory
         );
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.message);
         }
         if (isMounted) {
-          setItems(data.items);
+          setItems(data);
         }
       } catch (error) {
         console.error(error);
