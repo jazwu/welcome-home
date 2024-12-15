@@ -149,6 +149,8 @@ export const createItem = async (req, res, next) => {
       return next(rollbackError);
     }
     return next(error);
+  } finally {
+    connection.release();
   }
 };
 
